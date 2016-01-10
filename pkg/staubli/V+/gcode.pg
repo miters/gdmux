@@ -7,11 +7,11 @@ roll = 180
 pitch = 90
 yaw = 0
 	
-ATTACH (slun, 4) "SERIAL:1"
+ATTACH (slun, 4) "LOCAL.SERIAL:4"
 
 SELECT ROBOT = 1
 ATTACH ()
-SPEED 40 ALWAYS
+SPEED 10 ALWAYS
 ACCEL (1) 100, 100
 
 SET zeroloc = TRANS(500,0,150,yaw,pitch,roll)
