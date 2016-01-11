@@ -10,7 +10,9 @@ This keeps things nice and simple.
 
 You need to install Go. https://github.com/ethereum/go-ethereum/wiki/Installing-Go
 
-For the Go parts, everything should work with `go get`. Run `go get github.com/LHSRobotics/gdmux/cmd/gdmux` and gdmux will be installed in your Go bin directory.
+You need to install mercurial. `$ sudo apt-get install mercurial meld`
+
+For the Go parts, everything should work with `go get`. Run `go get github.com/MITERS/gdmux/cmd/gdmux` and gdmux will be installed in your Go bin directory.
 
 ## Quickstart
 
