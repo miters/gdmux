@@ -62,6 +62,18 @@ Add more "TYPE" commands to the gcode.pg program to print things out to /dev/tty
 
 If anything doesn't seem to work, abort/kill out of V+ program back to "." prompt, ctrl-c out of gdmux, and start again.
 
+You can check if /dev/ttyUSB1 is working:
+
+    $ python sendvplus.py serialtest.v2 serialtest
+    $ sudo minicom /dev/ttyUSB0
+      . exec serialtest
+    $ sudo minicom /dev/ttyUSB1
+      A test of MITERS Staubli
+      A test of MITERS Staubli
+      <...>
+
+Use `abort` to exit out of the program on the Staubli and the USB1 should stop spitting lines.
+
 # Offset from Gcode to Pendant
 x +500
 y +0
