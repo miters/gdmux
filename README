@@ -33,7 +33,7 @@ Then connect the RS232 term port from the main processer (as /dev/ttyUSB1)
 
 In another terminal:
 
-    $ gdmux -consolerate 9600 -consoletty "/dev/ttyUSB0" -datarate 9600 -datatty "/dev/ttyUSB1 -http :5000
+    $ gdmux -consolerate 9600 -consoletty "/dev/ttyUSB0" -datarate 9600 -datatty "/dev/ttyUSB1" -http :5000
 
 In a browser, open http://localhost:5000 and paste in the code you want to run.
 
