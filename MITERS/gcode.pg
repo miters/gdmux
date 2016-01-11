@@ -1,0 +1,122 @@
+auto slun
+auto real x, y, z, a, b, c, op
+
+auto real pitch, yaw, roll
+
+roll = 180
+pitch = 90
+yaw = 0
+	
+ATTACH (slun, 4) "LOCAL.SERIAL:4"
+
+TYPE "Serial out attached"
+
+SELECT ROBOT = 1
+ATTACH ()
+SPEED 10 ALWAYS
+ACCEL (1) 100, 100
+
+SET zeroloc = TRANS(500,0,150,yaw,pitch,roll)
+
+ABOVE
+
+TYPE "IK set to ABOVE"
+
+IF NOT(INRANGE(zeroloc) == 0) THEN
+	READY
+	DRIVE 2, 45, 100
+	MOVE zeroloc
+	TYPE "Moved to zero location"
+END
+
+WRITE (slun) "Ready"
+TYPE "Ready to take gcode!"
+
+WHILE TRUE DO
+	READ (slun) op, x, y, z, a, b, c
+	IF IOSTAT(slun) < 0 THEN
+		TYPE IOSTAT(slun), " ", $ERROR(IOSTAT(slun))
+		TIMER 1 = 0
+		WAIT TIMER(1) > 1
+	END
+
+	CASE op OF
+	VALUE 0:
+		; quick move
+		SET loc = TRANS(x,y,z,yaw,pitch,roll)
+
+		if (x == 0) and (y == 0) and (z == 0) then
+			TYPE "got zeros, wtf"
+			pause
+		end
+
+		TYPE "move ", x, ",", y, ",", z
+		IF INRANGE(loc) == 0 THEN
+			MOVE loc
+			WRITE (slun) "OK"
+		ELSE
+			TYPE "out of range"
+			WRITE (slun) "out of range"
+		END
+		
+	VALUE 1:
+		; straight line
+		SET loc = TRANS(x,y,z,yaw,pitch,roll)
+
+		if (x == 0) and (y == 0) and (z == 0) then
+			TYPE "got zeros, wtf"
+			pause
+		end
+
+		TYPE "line ", x, ",", y, ",", z
+		IF INRANGE(loc) == 0 THEN
+			MOVES loc
+			WRITE (slun) "OK"
+		ELSE
+			TYPE "out of range"
+			WRITE (slun) "out of range"
+		END
+		
+	VALUE 2:
+		; stop
+		TYPE "break"
+		BREAK
+		decompose val[] = HERE
+		WRITE (slun) "OK", val[0], val[1], val[2]
+		
+	VALUE 3:
+		; relative line
+		HERE cur
+
+		SET loc = SHIFT(cur BY x, y, z)
+		IF INRANGE(loc) == 0 THEN
+			MOVES loc
+			WRITE (slun) "OK"
+		ELSE
+			TYPE "out of range"
+			WRITE (slun) "out of range"
+		END
+
+	VALUE 9:
+		; 6DOF move
+		SET loc = TRANS(x,y,z,a,b,c)
+
+		if (x == 0) and (y == 0) and (z == 0) then
+			TYPE "got zeros, wtf"
+			pause
+		end
+
+		TYPE "move ", x, ",", y, ",", z, ",", a, ",", b, ",", c
+		IF INRANGE(loc) == 0 THEN
+			MOVE loc
+			WRITE (slun) "OK"
+		ELSE
+			TYPE "out of range"
+			WRITE (slun) "out of range"
+		END
+	ANY
+		TYPE "unknown opcode"
+		WRITE (slun) "unknown opcode"
+	END
+
+END
