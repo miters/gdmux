@@ -1,7 +1,7 @@
-auto slun
-auto real x, y, z, a, b, c, op
+AUTO slun
+AUTO real x, y, z, a, b, c, op
 
-auto real pitch, yaw, roll
+AUTO real pitch, yaw, roll
 
 roll = 180
 pitch = 90
@@ -13,7 +13,7 @@ TYPE "Serial out attached"
 
 SELECT ROBOT = 1
 ATTACH ()
-SPEED 10 ALWAYS
+SPEED 2 ALWAYS
 ACCEL (1) 100, 100
 
 SET zeroloc = TRANS(500,0,150,yaw,pitch,roll)
@@ -22,12 +22,12 @@ ABOVE
 
 TYPE "IK set to ABOVE"
 
-IF NOT(INRANGE(zeroloc) == 0) THEN
-	READY
-	DRIVE 2, 45, 100
-	MOVE zeroloc
-	TYPE "Moved to zero location"
-END
+READY
+ABOVE
+DRIVE 2, 45, 2
+ABOVE
+MOVE zeroloc
+TYPE "Moved to zero location"
 
 WRITE (slun) "Ready"
 TYPE "Ready to take gcode!"
@@ -96,7 +96,7 @@ WHILE TRUE DO
 			TYPE "out of range"
 			WRITE (slun) "out of range"
 		END
-
+		
 	VALUE 9:
 		; 6DOF move
 		SET loc = TRANS(x,y,z,a,b,c)
@@ -114,6 +114,18 @@ WHILE TRUE DO
 			TYPE "out of range"
 			WRITE (slun) "out of range"
 		END
+		
+	VALUE 15:
+		; Pause (Disable Power)
+		DISABLE POWER
+		
+	VALUE 16:
+		; Tool Change
+		
+	VALUE 17:
+		; Resume (Enable Power)
+		ENABLE POWER
+		
 	ANY
 		TYPE "unknown opcode"
 		WRITE (slun) "unknown opcode"
